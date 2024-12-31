@@ -1,0 +1,4 @@
+rasa==3.6.20
+flask
+gunicorn
+# Add any other dependencies your bot requires
