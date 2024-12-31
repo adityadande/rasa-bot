@@ -17,7 +17,7 @@
         window.WebChat.default.init({
             selector: "#webchat",  // The ID of the div that will hold the chatbot
             initPayload: '/get_started',  // Initial payload for the bot to start with
-            socketUrl: "http://localhost:5055",  // Rasa server URL (use the correct port)
+            socketUrl:  "rasa-bot-sigma.vercel.app", // Replace with your Rasa server's public URL",  // Rasa server URL (use the correct port)
             socketPath: "/socket.io/",  // Websocket path for Rasa
             customData: { language: "en" },  // Custom data if needed (optional)
             theme: {
