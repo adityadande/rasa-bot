@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rasa Chatbot</title>
+    <!-- Include the Rasa Webchat script -->
+    <script src="https://cdn.jsdelivr.net/npm/rasa-webchat@1.0.0/lib/index.js"></script>
+</head>
+<body>
+    <h1>Chat with Rasa Bot, aditya dande</h1>
+    <!-- Div container for the chatbot -->
+    <div id="webchat" style="height: 500px;"></div>
+
+    <script>
+        // Initialize Rasa Webchat
+        window.WebChat.default.init({
+            selector: "#webchat",  // The ID of the div that will hold the chatbot
+            initPayload: '/get_started',  // Initial payload for the bot to start with
+            socketUrl: "http://localhost:5055",  // Rasa server URL (use the correct port)
+            socketPath: "/socket.io/",  // Websocket path for Rasa
+            customData: { language: "en" },  // Custom data if needed (optional)
+            theme: {
+                primary_color: "#0078D4",  // Custom theme (optional)
+                background_color: "white",
+                text_color: "black",
+                header_text_color: "black",
+            }
+        });
+    </script>
+</body>
+</html>

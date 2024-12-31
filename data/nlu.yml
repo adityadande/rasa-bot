@@ -1,0 +1,78 @@
+version: "3.1"
+
+nlu:
+- intent: greet
+  examples: |
+    - hey
+
+- intent: goodbye
+  examples: |
+    - have a nice day
+
+- intent: affirm
+  examples: |
+    - yes
+    - indeed
+
+- intent: deny
+  examples: |
+    - no
+    - not really
+
+- intent: mood_great
+  examples: |
+    - perfect
+    - great
+
+- intent: mood_unhappy
+  examples: |
+    - my day was horrible
+
+- intent: bot_challenge
+  examples: |
+    - are you a bot?
+    - are you a human?
+    - am I talking to a bot?
+    - am I talking to a human?
+
+- intent: ask_experience
+  examples: |
+    - Tell me about your work experience.
+    - What companies have you worked at?
+    - Describe your roles in past jobs.
+
+- intent: ask_skills
+  examples: |
+    - What skills do you have?
+    - List your technical skills.
+    - What are your main areas of expertise?
+
+- intent: ask_education
+  examples: |
+    - Where did you study?
+    - Tell me about your education.
+    - What degree do you hold?
+
+- intent: ask_email
+  examples: |
+    - What is your email?
+    - Can you give me your email address?
+    - Please tell me your email.
+    - I'd like to know your email.
+    - What’s your email?
+
+- intent: ask_phone
+  examples: |
+    - What is your phone number?
+    - Can you give me your phone number?
+    - Please tell me your phone number.
+    - I'd like to know your contact number.
+    - What’s your contact number?
+
+- intent: ask_summary
+  examples: |
+    - Can you give me a summary of your resume?
+    - Tell me about yourself.
+    - What is your professional summary?
+    - Could you share your resume summary?
+    - Give me an overview of your career.

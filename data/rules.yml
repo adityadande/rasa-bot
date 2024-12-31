@@ -1,0 +1,37 @@
+version: "3.1"
+
+rules:
+  - rule: Respond to "ask_full_name"
+    steps:
+      - intent: ask_full_name
+      - action: action_answer_resume
+
+  - rule: Respond to "ask_experience"
+    steps:
+      - intent: ask_experience
+      - action: action_answer_resume
+
+  - rule: Respond to "ask_skills"
+    steps:
+      - intent: ask_skills
+      - action: action_answer_resume
+
+  - rule: Respond to "ask_education"
+    steps:
+      - intent: ask_education
+      - action: action_answer_resume
+
+  - rule: Respond to "ask_email"
+    steps:
+      - intent: ask_email
+      - action: action_answer_resume
+
+  - rule: Respond to "ask_phone"
+    steps:
+      - intent: ask_phone
+      - action: action_answer_resume
+
+  - rule: Respond to "ask_summary"
+    steps:
+      - intent: ask_summary
+      - action: action_answer_resume
