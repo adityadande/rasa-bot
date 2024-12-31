@@ -1,4 +1,4 @@
-rasa==3.7.0b2
+rasa==2.8.0
 flask
 gunicorn
 # Add any other dependencies your bot requires
