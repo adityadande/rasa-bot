@@ -15,3 +15,10 @@ EXPOSE 5005
 
 # Command to run Rasa
 CMD ["rasa", "run", "--enable-api", "--cors", "*", "--port", "5005"]
+
+FROM python:3.8-slim
+
+# Install dependencies
+COPY requirements.txt .
+RUN python -m pip install --upgrade pip && pip install -r requirements.txt
+
