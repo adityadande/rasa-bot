@@ -1,0 +1,9 @@
+version: "3.0"
+pipelines:
+  - name: "WhitespaceTokenizer"
+  - name: "CountVectorsFeaturizer"
+  - name: "DIETClassifier"
+  - name: "EntitySynonymMapper"
+  - name: "ResponseSelector"
+policies:
+  - name: "RulePolicy"
