@@ -3,29 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rasa Chatbot</title>
-    <!-- Include the Rasa Webchat script -->
+    <title>Your Website Chatbot</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        .chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        #webchat {
+            height: 500px;
+            width: 350px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+    </style>
     <script src="https://cdn.jsdelivr.net/npm/rasa-webchat@1.0.1/lib/index.js"></script>
 </head>
 <body>
-    <h1>Chat with Rasa Bot, aditya dande</h1>
-    <!-- Div container for the chatbot -->
-    <div id="webchat" style="height: 500px;"></div>
+    <div class="chat-container">
+        <div id="webchat"></div>
+    </div>
 
     <script>
-        console.log(window.WebChat);
-        // Initialize Rasa Webchat
         window.WebChat.default.init({
-            selector: "#webchat",  // The ID of the div that will hold the chatbot
-            initPayload: '/get_started',  // Initial payload for the bot to start with
-            socketUrl:  "https://rasa-bot-adityadandes-projects.vercel.app", // Replace with your Rasa server's public URL",  // Rasa server URL (use the correct port)
-            socketPath: "/socket.io/",  // Websocket path for Rasa
-            customData: { language: "en" },  // Custom data if needed (optional)
+            selector: "#webchat",
+            initPayload: '/get_started',
+            socketUrl: "http://localhost:5005", // Updated to local development server
+            socketPath: "/socket.io/",
+            customData: { language: "en" },
+            title: "Your Bot Name",
+            subtitle: "How can I help you today?",
+            profileAvatar: "https://i.imgur.com/nGF1K8f.jpg", // Using a sample avatar
+            userAvatar: "https://i.imgur.com/8yQC5aG.jpg", // Using a sample avatar
+            params: {
+                storage: "session"
+            },
             theme: {
-                primary_color: "#0078D4",  // Custom theme (optional)
+                primary_color: "#0078D4",
+                secondary_color: "#005a9e",
                 background_color: "white",
                 text_color: "black",
                 header_text_color: "black",
+                font_family: "Arial, sans-serif",
+                message_bubble_style: {
+                    borderRadius: "10px",
+                    padding: "10px",
+                    margin: "5px"
+                }
             }
         });
     </script>
