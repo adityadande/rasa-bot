@@ -1,3 +1,4 @@
 rasa train // to update the new changes
-rasa runa actions // start server
-rasa shell //start your bot
+rasa run // start server
+rasa run actions // start action server
+http.server //start your bot on local server
