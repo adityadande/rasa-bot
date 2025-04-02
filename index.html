@@ -115,12 +115,15 @@
         <div class="chat-messages" id="chat-messages">
             <div class="message bot-message">
                 Hello! I'm your resume chatbot. You can ask me about:
-                <ul>
+                <ol>
                     <li>My experience</li>
                     <li>My skills</li>
                     <li>My education</li>
                     <li>My contact information</li>
-                </ul>
+                    <li>My name</li>
+                    <li>My summary</li>
+                </ol>
+                Just type the number or ask your question!
             </div>
         </div>
         <div class="chat-input">
@@ -235,20 +238,30 @@
         function processMessage(message) {
             message = message.toLowerCase();
             
-            if (message.includes('hello') || message.includes('hi')) {
-                return "Hello! How can I help you today?";
-            }
-            else if (message.includes('experience')) {
+            // Handle numbered responses
+            if (message === '1' || message.includes('experience')) {
                 return resumeData.experience.map(exp => 
                     `${exp.role} at ${exp.company} (${exp.duration})`
                 ).join('\n');
             }
-            else if (message.includes('skill')) {
+            else if (message === '2' || message.includes('skill')) {
                 return "My skills include: " + resumeData.skills.join(', ');
             }
-            else if (message.includes('education')) {
+            else if (message === '3' || message.includes('education')) {
                 const edu = resumeData.education[0];
                 return `I graduated from ${edu.institution} with a degree in ${edu.degree} in ${edu.year}.`;
+            }
+            else if (message === '4' || message.includes('contact')) {
+                return `Contact Information:\nEmail: ${resumeData.email}\nPhone: ${resumeData.phone}`;
+            }
+            else if (message === '5' || message.includes('name')) {
+                return `My name is ${resumeData.name}`;
+            }
+            else if (message === '6' || message.includes('summary')) {
+                return resumeData.summary;
+            }
+            else if (message.includes('hello') || message.includes('hi')) {
+                return "Hello! How can I help you today?";
             }
             else if (message.includes('email')) {
                 return `My email address is: ${resumeData.email}`;
@@ -256,14 +269,8 @@
             else if (message.includes('phone')) {
                 return `My phone number is: ${resumeData.phone}`;
             }
-            else if (message.includes('name')) {
-                return `My name is ${resumeData.name}`;
-            }
-            else if (message.includes('summary')) {
-                return resumeData.summary;
-            }
             else {
-                return "I'm not sure about that. You can ask me about my experience, skills, education, or contact information.";
+                return "I'm not sure about that. You can ask me about:\n1. Experience\n2. Skills\n3. Education\n4. Contact Information\n5. Name\n6. Summary\n\nJust type the number or ask your question!";
             }
         }
 
