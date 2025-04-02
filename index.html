@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Website Chatbot</title>
+    <title>Resume Chatbot</title>
+    <script src="https://cdn.jsdelivr.net/npm/rasa-webchat@1.0.1/lib/index.js"></script>
     <style>
         body {
             margin: 0;
@@ -14,48 +15,262 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            z-index: 1000;
-        }
-        #webchat {
-            height: 500px;
             width: 350px;
+            height: 500px;
+            background: white;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+        }
+        .chat-header {
+            background: #0078D4;
+            color: white;
+            padding: 15px;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            align-items: center;
+        }
+        .chat-header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .chat-messages {
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+        .bot-message {
+            background: #f0f0f0;
+            margin-right: auto;
+        }
+        .user-message {
+            background: #0078D4;
+            color: white;
+            margin-left: auto;
+        }
+        .chat-input {
+            padding: 15px;
+            border-top: 1px solid #eee;
+            display: flex;
+        }
+        .chat-input input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            margin-right: 10px;
+        }
+        .chat-input button {
+            background: #0078D4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        .chat-input button:hover {
+            background: #005a9e;
+        }
+        #webchat {
+            display: none;
+        }
+        .mode-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            background: #0078D4;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            border: none;
+        }
+        .mode-switch:hover {
+            background: #005a9e;
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/rasa-webchat@1.0.1/lib/index.js"></script>
 </head>
 <body>
-    <div class="chat-container">
-        <div id="webchat"></div>
+    <button class="mode-switch" onclick="toggleMode()">Switch to Rasa Mode</button>
+    
+    <div class="chat-container" id="standalone-chat">
+        <div class="chat-header">
+            <img src="https://i.imgur.com/nGF1K8f.jpg" alt="Bot Avatar">
+            <div>
+                <h3 style="margin: 0;">Resume Bot</h3>
+                <small>Ask me about my experience</small>
+            </div>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <div class="message bot-message">
+                Hello! I'm your resume chatbot. You can ask me about:
+                <ul>
+                    <li>My experience</li>
+                    <li>My skills</li>
+                    <li>My education</li>
+                    <li>My contact information</li>
+                </ul>
+            </div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="user-input" placeholder="Type your message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
     </div>
 
+    <div id="webchat"></div>
+
     <script>
-        window.WebChat.default.init({
-            selector: "#webchat",
-            initPayload: '/get_started',
-            socketUrl: "http://localhost:5005", // Updated to local development server
-            socketPath: "/socket.io/",
-            customData: { language: "en" },
-            title: "Your Bot Name",
-            subtitle: "How can I help you today?",
-            profileAvatar: "https://i.imgur.com/nGF1K8f.jpg", // Using a sample avatar
-            userAvatar: "https://i.imgur.com/8yQC5aG.jpg", // Using a sample avatar
-            params: {
-                storage: "session"
-            },
-            theme: {
-                primary_color: "#0078D4",
-                secondary_color: "#005a9e",
-                background_color: "white",
-                text_color: "black",
-                header_text_color: "black",
-                font_family: "Arial, sans-serif",
-                message_bubble_style: {
-                    borderRadius: "10px",
-                    padding: "10px",
-                    margin: "5px"
+        const resumeData = {
+            name: "Aditya Dande",
+            email: "adityadande@gmail.com",
+            phone: "+49 01783358864",
+            summary: "Developer with over 3 years of experience in software development and IT product management.",
+            skills: ["Microsoft Office", "Rasa", "Machine Learning", "Java", "R software", "Database technologies (SQL)", "HTML & CSS"],
+            experience: [
+                {
+                    company: "DHL Freight GmbH, Bonn",
+                    role: "Work Student",
+                    duration: "09/2022 – 08/2023"
+                },
+                {
+                    company: "CloudRoute Solutions Pvt. Ltd., Mumbai, India",
+                    role: "Salesforce Consultant",
+                    duration: "03/2019 – 08/2020"
                 }
+            ],
+            education: [
+                {
+                    degree: "Industrial Engineering & International Management",
+                    institution: "University of Applied Sciences Fresenius, Cologne",
+                    year: "2022-2024"
+                }
+            ]
+        };
+
+        let isRasaMode = false;
+
+        function toggleMode() {
+            isRasaMode = !isRasaMode;
+            const standaloneChat = document.getElementById('standalone-chat');
+            const webchat = document.getElementById('webchat');
+            const modeButton = document.querySelector('.mode-switch');
+
+            if (isRasaMode) {
+                standaloneChat.style.display = 'none';
+                webchat.style.display = 'block';
+                modeButton.textContent = 'Switch to Standalone Mode';
+                initRasaWebchat();
+            } else {
+                standaloneChat.style.display = 'flex';
+                webchat.style.display = 'none';
+                modeButton.textContent = 'Switch to Rasa Mode';
+            }
+        }
+
+        function initRasaWebchat() {
+            window.WebChat.default.init({
+                selector: "#webchat",
+                initPayload: '/get_started',
+                socketUrl: "http://localhost:5005",
+                socketPath: "/socket.io/",
+                customData: { language: "en" },
+                title: "Resume Bot",
+                subtitle: "Ask me about my experience",
+                profileAvatar: "https://i.imgur.com/nGF1K8f.jpg",
+                userAvatar: "https://i.imgur.com/8yQC5aG.jpg",
+                params: {
+                    storage: "session"
+                },
+                theme: {
+                    primary_color: "#0078D4",
+                    secondary_color: "#005a9e",
+                    background_color: "white",
+                    text_color: "black",
+                    header_text_color: "black",
+                    font_family: "Arial, sans-serif",
+                    message_bubble_style: {
+                        borderRadius: "10px",
+                        padding: "10px",
+                        margin: "5px"
+                    }
+                }
+            });
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('user-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            // Add user message
+            addMessage(message, 'user');
+            input.value = '';
+
+            // Process message and get response
+            const response = processMessage(message);
+            setTimeout(() => addMessage(response, 'bot'), 500);
+        }
+
+        function addMessage(text, sender) {
+            const messagesDiv = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            messageDiv.textContent = text;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function processMessage(message) {
+            message = message.toLowerCase();
+            
+            if (message.includes('hello') || message.includes('hi')) {
+                return "Hello! How can I help you today?";
+            }
+            else if (message.includes('experience')) {
+                return resumeData.experience.map(exp => 
+                    `${exp.role} at ${exp.company} (${exp.duration})`
+                ).join('\n');
+            }
+            else if (message.includes('skill')) {
+                return "My skills include: " + resumeData.skills.join(', ');
+            }
+            else if (message.includes('education')) {
+                const edu = resumeData.education[0];
+                return `I graduated from ${edu.institution} with a degree in ${edu.degree} in ${edu.year}.`;
+            }
+            else if (message.includes('email')) {
+                return `My email address is: ${resumeData.email}`;
+            }
+            else if (message.includes('phone')) {
+                return `My phone number is: ${resumeData.phone}`;
+            }
+            else if (message.includes('name')) {
+                return `My name is ${resumeData.name}`;
+            }
+            else if (message.includes('summary')) {
+                return resumeData.summary;
+            }
+            else {
+                return "I'm not sure about that. You can ask me about my experience, skills, education, or contact information.";
+            }
+        }
+
+        // Allow sending message with Enter key
+        document.getElementById('user-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
             }
         });
     </script>
