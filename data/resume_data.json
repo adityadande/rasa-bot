@@ -1,0 +1,36 @@
+{
+  "name": "Aditya Dande",
+  "email": "adityadande@gmail.com",
+  "phone": "+49 01783358864",
+  "summary": "Developer with over 3 years of experience in software development and IT product management. Successfully led projects including the development of REST and SOAP API systems and optimized operational processes. Proven ability in client communication, incident management, and data analysis. Seeks to leverage technical skills and project management experience to contribute effectively to a forward-thinking development team.",
+  "skills": ["Microsoft Office (Word, Excel, PowerPoint)", "Rasa", "Machine Learning", "Java", "R software", "Database technologies (SQL)", "HTML & CSS"],
+  "experience": [
+    {
+      "company": "DHL Freight GmbH, Bonn",
+      "role": "Work Student",
+      "duration": "09/2022 – 08/2023",
+      "responsibilities": [
+        "Facilitated the use of JIRA and Confluence to improve application support.",
+        "Development and creation of Power Point presentations for monthly team meetings to ensure clear communications.",
+	"Generation of Data analysis for terminal data from 100,000 API usages using R software."
+      ]
+    },
+    {
+      "company": "CloudRoute Solutions Pvt. Ltd., Mumbai, India",
+      "role": "Salesforce Consultant",
+      "duration": "03/2019 – 08/2020 ",
+      "responsibilities": [
+        "Requirements gathering & solutions offering.",
+	"Development of REST and SOAP API systems, executed all processes within 4 weeks.",
+        "Management of Salesforce Admin Operations including reports and dashboards with Data migration."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Industrial Engineering & International Management ",
+      "institution": "University of Applied Sciences Fresenius, Cologne",
+      "year": "2022-2024"
+    }
+  ]
+}

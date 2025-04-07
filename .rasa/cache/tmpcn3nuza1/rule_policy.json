@@ -1,0 +1,21 @@
+{
+  "lookup": {
+    "rules": {
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"show_menu\"}}]": "utter_menu",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"show_menu\"}}, {\"prev_action\": {\"action_name\": \"utter_menu\"}, \"user\": {\"intent\": \"show_menu\"}}]": "action_listen",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"menu_choice\"}}]": "action_handle_menu_choice",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"menu_choice\"}}, {\"prev_action\": {\"action_name\": \"action_handle_menu_choice\"}, \"user\": {\"intent\": \"menu_choice\"}}]": "action_listen",
+      "[{\"prev_action\": {\"action_name\": \"utter_menu\"}}]": "action_listen",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"unclear_query\"}}]": "utter_unclear_query",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"unclear_query\"}}, {\"prev_action\": {\"action_name\": \"utter_unclear_query\"}, \"user\": {\"intent\": \"unclear_query\"}}]": "action_listen"
+    },
+    "rule_only_slots": [],
+    "rule_only_loops": [],
+    "rules_for_loop_unhappy_path": {},
+    "rules_not_in_stories": [
+      "predicting default action with intent back",
+      "predicting default action with intent restart",
+      "predicting default action with intent session_start"
+    ]
+  }
+}

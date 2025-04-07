@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rasa Chat Interface</title>
+    <title>Resume Chat Interface</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -42,6 +42,7 @@
             padding: 10px;
             border-radius: 10px;
             max-width: 80%;
+            white-space: pre-line;
         }
         .user-message {
             background-color: #0078D4;
@@ -89,6 +90,24 @@
             background-color: #ffebee;
             color: #c62828;
         }
+        .menu-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .menu-option {
+            background-color: #e3f2fd;
+            color: #0d47a1;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            border: 1px solid #bbdefb;
+        }
+        .menu-option:hover {
+            background-color: #bbdefb;
+        }
     </style>
 </head>
 <body>
@@ -99,16 +118,23 @@
             <img src="https://i.imgur.com/nGF1K8f.jpg" alt="Bot Avatar">
             <div>
                 <h3 style="margin: 0;">Resume Bot</h3>
-                <small>Ask me about my experience</small>
+                <small>Ask me about my resume</small>
             </div>
         </div>
         <div class="chat-messages" id="chat-messages">
             <div class="message bot-message">
-                Hello! I'm your resume chatbot powered by Rasa. You can ask me about my experience, skills, education, and more!
+                Hello! I'm your resume assistant. Here are your options:
+1. About Me (Professional Summary)
+2. Education
+3. Work Experience
+4. Skills
+5. Contact Information
+
+Please choose a number (1-5) or type 'menu' to see this list again.
             </div>
         </div>
         <div class="chat-input">
-            <input type="text" id="user-input" placeholder="Type your message...">
+            <input type="text" id="user-input" placeholder="Type a number (1-5) or 'menu'...">
             <button onclick="sendMessage()">Send</button>
         </div>
     </div>
@@ -162,7 +188,7 @@
                     });
                 } else {
                     // If no response, add a default message
-                    addMessage("I'm not sure how to respond to that. Can you try asking about my experience, skills, education, or contact information?", 'bot');
+                    addMessage("I'm not sure how to respond to that. Please choose a number between 1 and 5, or type 'menu' to see the options again.", 'bot');
                 }
             })
             .catch(error => {

@@ -16,45 +16,55 @@ class ActionHandleMenuChoice(Action):
             # Get the user's choice
             choice = tracker.latest_message.get('text', '').strip()
             
+            # Get the absolute path to resume_data.json
+            current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            resume_path = os.path.join(current_dir, 'data', 'resume_data.json')
+            
             # Load resume data
-            with open('data/resume_data.json', 'r') as f:
+            with open(resume_path, 'r') as f:
                 resume_data = json.load(f)
             
             # Handle different menu choices
             if choice in ['1', 'option 1', 'choose 1']:
-                dispatcher.utter_message(text=resume_data.get('professional_summary', 'Professional summary not available.'))
+                dispatcher.utter_message(text=resume_data.get('summary', 'Professional summary not available.'))
             elif choice in ['2', 'option 2', 'choose 2']:
                 education = resume_data.get('education', [])
                 if education:
-                    edu_text = "Education:\n" + "\n".join([f"- {edu}" for edu in education])
-                    dispatcher.utter_message(text=edu_text)
+                    edu_text = "Education:\n\n"
+                    for edu in education:
+                        edu_text += f"• {edu['degree']}\n"
+                        edu_text += f"  Institution: {edu['institution']}\n"
+                        edu_text += f"  Year: {edu['year']}\n\n"
+                    dispatcher.utter_message(text=edu_text.strip())
                 else:
                     dispatcher.utter_message(text="Education information not available.")
             elif choice in ['3', 'option 3', 'choose 3']:
-                experience = resume_data.get('work_experience', [])
+                experience = resume_data.get('experience', [])
                 if experience:
-                    exp_text = "Work Experience:\n" + "\n".join([f"- {exp}" for exp in experience])
-                    dispatcher.utter_message(text=exp_text)
+                    exp_text = "Work Experience:\n\n"
+                    for exp in experience:
+                        exp_text += f"• {exp['role']} at {exp['company']}\n"
+                        exp_text += f"  Duration: {exp['duration']}\n"
+                        exp_text += "  Responsibilities:\n"
+                        for resp in exp['responsibilities']:
+                            exp_text += f"    - {resp}\n"
+                        exp_text += "\n"
+                    dispatcher.utter_message(text=exp_text.strip())
                 else:
                     dispatcher.utter_message(text="Work experience information not available.")
             elif choice in ['4', 'option 4', 'choose 4']:
                 skills = resume_data.get('skills', [])
                 if skills:
-                    skills_text = "Skills:\n" + "\n".join([f"- {skill}" for skill in skills])
+                    skills_text = "Skills:\n\n" + "\n".join([f"• {skill}" for skill in skills])
                     dispatcher.utter_message(text=skills_text)
                 else:
                     dispatcher.utter_message(text="Skills information not available.")
             elif choice in ['5', 'option 5', 'choose 5']:
-                contact = resume_data.get('contact_information', {})
-                if contact:
-                    contact_text = "Contact Information:\n"
-                    if 'email' in contact:
-                        contact_text += f"Email: {contact['email']}\n"
-                    if 'phone' in contact:
-                        contact_text += f"Phone: {contact['phone']}"
-                    dispatcher.utter_message(text=contact_text)
-                else:
-                    dispatcher.utter_message(text="Contact information not available.")
+                contact_text = "Contact Information:\n\n"
+                contact_text += f"• Name: {resume_data.get('name', 'N/A')}\n"
+                contact_text += f"• Email: {resume_data.get('email', 'N/A')}\n"
+                contact_text += f"• Phone: {resume_data.get('phone', 'N/A')}"
+                dispatcher.utter_message(text=contact_text)
             else:
                 dispatcher.utter_message(text="I didn't understand that choice. Please select a number between 1 and 5, or type 'menu' to see the options again.")
             
