@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resume Chatbot</title>
     <script src="https://cdn.jsdelivr.net/npm/rasa-webchat@1.0.1/lib/index.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
     <style>
         body {
             margin: 0;
@@ -100,42 +99,9 @@
         .mode-switch:hover {
             background: #005a9e;
         }
-        .upload-container {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1001;
-            background: #0078D4;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            border: none;
-        }
-        .upload-container input[type="file"] {
-            display: none;
-        }
-        .upload-container:hover {
-            background: #005a9e;
-        }
-        .category {
-            margin: 5px 0;
-            padding: 5px;
-            border-radius: 5px;
-            background: #f8f9fa;
-        }
-        .confidence {
-            font-size: 0.8em;
-            color: #666;
-            margin-left: 10px;
-        }
     </style>
 </head>
 <body>
-    <div class="upload-container">
-        <label for="pdf-upload">Upload Resume PDF</label>
-        <input type="file" id="pdf-upload" accept=".pdf">
-    </div>
     <button class="mode-switch" onclick="toggleMode()">Switch to Rasa Mode</button>
     
     <div class="chat-container" id="standalone-chat">
@@ -148,10 +114,14 @@
         </div>
         <div class="chat-messages" id="chat-messages">
             <div class="message bot-message">
-                Hello! I'm your resume chatbot. You can:
+                Hello! I'm your resume chatbot. You can ask me about:
                 <ol>
-                    <li>Upload a resume PDF to create a new chatbot</li>
-                    <li>Ask me about the current resume</li>
+                    <li>My experience</li>
+                    <li>My skills</li>
+                    <li>My education</li>
+                    <li>My contact information</li>
+                    <li>My name</li>
+                    <li>My summary</li>
                 </ol>
                 Just type the number or ask your question!
             </div>
@@ -165,9 +135,7 @@
     <div id="webchat"></div>
 
     <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
-        
-        let resumeData = {
+        const resumeData = {
             name: "Aditya Dande",
             email: "adityadande@gmail.com",
             phone: "+49 01783358864",
@@ -191,8 +159,7 @@
                     institution: "University of Applied Sciences Fresenius, Cologne",
                     year: "2022-2024"
                 }
-            ],
-            others: []
+            ]
         };
 
         let isRasaMode = false;
@@ -245,113 +212,6 @@
             });
         }
 
-        // PDF Upload Handler
-        document.getElementById('pdf-upload').addEventListener('change', async function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            try {
-                const arrayBuffer = await file.arrayBuffer();
-                const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
-                let fullText = '';
-
-                // Extract text from all pages
-                for (let i = 1; i <= pdf.numPages; i++) {
-                    const page = await pdf.getPage(i);
-                    const textContent = await page.getTextContent();
-                    fullText += textContent.items.map(item => item.str).join(' ') + '\n';
-                }
-
-                // Parse the text and update resumeData
-                parseResumeText(fullText);
-                
-                // Update welcome message
-                const welcomeMessage = document.querySelector('.bot-message');
-                welcomeMessage.innerHTML = `
-                    Resume uploaded successfully! You can ask me about:
-                    <ol>
-                        <li>My experience</li>
-                        <li>My skills</li>
-                        <li>My education</li>
-                        <li>My contact information</li>
-                        <li>My name</li>
-                        <li>My summary</li>
-                        <li>Other information</li>
-                    </ol>
-                    Just type the number or ask your question!
-                `;
-            } catch (error) {
-                console.error('Error processing PDF:', error);
-                addMessage('Sorry, there was an error processing the PDF. Please try again.', 'bot');
-            }
-        });
-
-        function parseResumeText(text) {
-            // Reset resumeData
-            resumeData = {
-                name: '',
-                email: '',
-                phone: '',
-                summary: '',
-                skills: [],
-                experience: [],
-                education: [],
-                others: []
-            };
-
-            // Extract email
-            const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
-            const emailMatch = text.match(emailRegex);
-            if (emailMatch) resumeData.email = emailMatch[0];
-
-            // Extract phone
-            const phoneRegex = /(?:\+\d{1,3}[-. ]?)?\(?\d{3}\)?[-. ]?\d{3}[-. ]?\d{4}/;
-            const phoneMatch = text.match(phoneRegex);
-            if (phoneMatch) resumeData.phone = phoneMatch[0];
-
-            // Extract name (assuming it's at the top of the resume)
-            const firstLine = text.split('\n')[0].trim();
-            if (firstLine) resumeData.name = firstLine;
-
-            // Extract skills (common technical skills)
-            const commonSkills = ['Python', 'Java', 'JavaScript', 'SQL', 'HTML', 'CSS', 'React', 'Node.js', 'Machine Learning', 'AI', 'Rasa', 'Git'];
-            resumeData.skills = commonSkills.filter(skill => 
-                text.toLowerCase().includes(skill.toLowerCase())
-            );
-
-            // Extract experience (looking for common patterns)
-            const experienceRegex = /([^.]*?)(?:at|in|for)\s+([^.]*?)(?:\s*\(([^)]*)\))?/g;
-            let match;
-            while ((match = experienceRegex.exec(text)) !== null) {
-                const role = match[1].trim();
-                const company = match[2].trim();
-                const duration = match[3] ? match[3].trim() : '';
-                if (role && company) {
-                    resumeData.experience.push({ role, company, duration });
-                }
-            }
-
-            // Extract education
-            const educationRegex = /(?:Bachelor|Master|PhD|Degree|University|College)[^.]*?/g;
-            const educationMatches = text.match(educationRegex);
-            if (educationMatches) {
-                resumeData.education = educationMatches.map(edu => ({
-                    degree: edu.trim(),
-                    institution: edu.trim(),
-                    year: ''
-                }));
-            }
-
-            // Extract summary (first paragraph after name)
-            const paragraphs = text.split('\n\n');
-            if (paragraphs.length > 1) {
-                resumeData.summary = paragraphs[1].trim();
-            }
-
-            // Store remaining text in others
-            resumeData.others = paragraphs.slice(2).map(p => p.trim()).filter(p => p);
-        }
-
         function sendMessage() {
             const input = document.getElementById('user-input');
             const message = input.value.trim();
@@ -378,51 +238,39 @@
         function processMessage(message) {
             message = message.toLowerCase();
             
+            // Handle numbered responses
             if (message === '1' || message.includes('experience')) {
-                if (resumeData.experience.length === 0) {
-                    return "No experience information found in the resume.";
-                }
                 return resumeData.experience.map(exp => 
                     `${exp.role} at ${exp.company} (${exp.duration})`
                 ).join('\n');
             }
             else if (message === '2' || message.includes('skill')) {
-                if (resumeData.skills.length === 0) {
-                    return "No skills information found in the resume.";
-                }
                 return "My skills include: " + resumeData.skills.join(', ');
             }
             else if (message === '3' || message.includes('education')) {
-                if (resumeData.education.length === 0) {
-                    return "No education information found in the resume.";
-                }
-                return resumeData.education.map(edu => 
-                    `${edu.degree} at ${edu.institution}${edu.year ? ` (${edu.year})` : ''}`
-                ).join('\n');
+                const edu = resumeData.education[0];
+                return `I graduated from ${edu.institution} with a degree in ${edu.degree} in ${edu.year}.`;
             }
             else if (message === '4' || message.includes('contact')) {
-                let contactInfo = [];
-                if (resumeData.email) contactInfo.push(`Email: ${resumeData.email}`);
-                if (resumeData.phone) contactInfo.push(`Phone: ${resumeData.phone}`);
-                return contactInfo.length > 0 ? contactInfo.join('\n') : "No contact information found in the resume.";
+                return `Contact Information:\nEmail: ${resumeData.email}\nPhone: ${resumeData.phone}`;
             }
             else if (message === '5' || message.includes('name')) {
-                return resumeData.name || "No name found in the resume.";
+                return `My name is ${resumeData.name}`;
             }
             else if (message === '6' || message.includes('summary')) {
-                return resumeData.summary || "No summary found in the resume.";
-            }
-            else if (message === '7' || message.includes('other')) {
-                if (resumeData.others.length === 0) {
-                    return "No additional information found in the resume.";
-                }
-                return "Additional Information:\n" + resumeData.others.join('\n\n');
+                return resumeData.summary;
             }
             else if (message.includes('hello') || message.includes('hi')) {
                 return "Hello! How can I help you today?";
             }
+            else if (message.includes('email')) {
+                return `My email address is: ${resumeData.email}`;
+            }
+            else if (message.includes('phone')) {
+                return `My phone number is: ${resumeData.phone}`;
+            }
             else {
-                return "I'm not sure about that. You can ask me about:\n1. Experience\n2. Skills\n3. Education\n4. Contact Information\n5. Name\n6. Summary\n7. Other Information\n\nJust type the number or ask your question!";
+                return "I'm not sure about that. You can ask me about:\n1. Experience\n2. Skills\n3. Education\n4. Contact Information\n5. Name\n6. Summary\n\nJust type the number or ask your question!";
             }
         }
 

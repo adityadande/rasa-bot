@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Classifier</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>AI Image Classifier</h1>
+        <p style="text-align: center; color: #666;">
+            Upload an image and let AI tell you what it sees!
+        </p>
+        
+        <div class="upload-section">
+            <input type="file" id="image-upload" accept="image/*" style="display: none;">
+            <button onclick="document.getElementById('image-upload').click()">Choose Image</button>
+        </div>
+
+        <div class="preview-section">
+            <img id="image-preview" style="display: none;">
+        </div>
+
+        <div class="loading">
+            <div class="spinner"></div>
+            <p>Loading AI model...</p>
+        </div>
+
+        <div class="predictions" id="predictions">
+            <h3>Predictions:</h3>
+            <div id="predictions-list"></div>
+        </div>
+
+        <div class="explanation-section">
+            <h3>How It Works</h3>
+            <div class="explanation-content">
+                <h4>1. TensorFlow.js</h4>
+                <p>This app uses TensorFlow.js, a JavaScript library that brings machine learning to the browser. It allows us to run complex AI models directly in your web browser without needing a server.</p>
+                
+                <h4>2. MobileNet Model</h4>
+                <p>We're using a pre-trained MobileNet model, which is a lightweight neural network designed for mobile and web applications. It can recognize 1000 different types of objects in images.</p>
+                
+                <h4>3. Image Processing</h4>
+                <p>When you upload an image, here's what happens:</p>
+                <ul>
+                    <li>The image is converted into a tensor (a multi-dimensional array of numbers)</li>
+                    <li>The image is resized to 224x224 pixels (the size MobileNet expects)</li>
+                    <li>The pixel values are normalized to help the model process them better</li>
+                </ul>
+                
+                <h4>4. Prediction Process</h4>
+                <p>The model analyzes the processed image and provides probabilities for different object classes. We show you the top 5 predictions with their confidence scores.</p>
+                
+                <h4>5. Classes</h4>
+                <p>The model can recognize 1000 different object categories, including:</p>
+                <ul>
+                    <li>Animals (dogs, cats, birds, etc.)</li>
+                    <li>Objects (chairs, tables, phones, etc.)</li>
+                    <li>Food items (fruits, vegetables, prepared dishes)</li>
+                    <li>Vehicles (cars, bikes, planes)</li>
+                    <li>And many more!</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load TensorFlow.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js"></script>
+    <!-- Load our script -->
+    <script src="script.js"></script>
+</body>
+</html> 
