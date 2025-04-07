@@ -4,17 +4,28 @@ FROM rasa/rasa:3.6.20-full
 # Set working directory
 WORKDIR /app
 
-# Copy your Rasa project files to the container
-COPY . /app
+# Copy requirements first to leverage Docker cache
+COPY requirements.txt /app/
 
 # Install the required Python dependencies
 RUN pip install -r requirements.txt
 
-# Expose the port the app will run on
-EXPOSE 5005
+# Copy your Rasa project files to the container
+COPY . /app
 
-# Command to run Rasa
-CMD ["rasa", "run", "--enable-api", "--cors", "*", "--port", "5005"]
+# Train the model
+RUN rasa train
+
+# Expose the ports the app will run on
+EXPOSE 5005
+EXPOSE 5055
+
+# Create a script to run both Rasa and Action server
+COPY start.sh /app/
+RUN chmod +x /app/start.sh
+
+# Command to run the start script
+CMD ["/app/start.sh"]
 
 FROM python:3.8-slim
 
