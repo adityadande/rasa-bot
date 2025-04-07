@@ -1,19 +1,11 @@
 # Rasa Resume Chatbot - Version History
 
-## Version 1.1.0 (2025-04-07)
-
-### New Features
-- Added handling for unclear queries
-- Implemented dynamic response generation based on available resume data
-- Added a custom action to provide a list of available information when the bot doesn't understand a query
-- Enhanced error handling in the action server
+## Version 1.2.0 (2025-04-07)
 
 ### Changes
-- Updated domain.yml with new intent and response for unclear queries
-- Added examples of unclear queries in nlu.yml
-- Created a new custom action (ActionHandleUnclearQuery) in actions.py
-- Added new stories and rules for handling unclear queries
-- Improved the resume data handling to dynamically check available information
+- Removed unnecessary utterances (utter_greet, utter_cheer_up, utter_happy, utter_goodbye, utter_iamabot)
+- Removed related stories from stories.yml
+- Streamlined the domain.yml file to focus on resume-related functionality
 
 ### Important Instructions for New Versions
 
@@ -56,6 +48,21 @@ If you encounter issues after updating:
 4. **Restart both servers** if you're still having issues:
    - Stop both servers (Ctrl+C)
    - Start them again in the correct order (Rasa server first, then action server)
+
+## Version 1.1.0 (2025-04-07)
+
+### New Features
+- Added handling for unclear queries
+- Implemented dynamic response generation based on available resume data
+- Added a custom action to provide a list of available information when the bot doesn't understand a query
+- Enhanced error handling in the action server
+
+### Changes
+- Updated domain.yml with new intent and response for unclear queries
+- Added examples of unclear queries in nlu.yml
+- Created a new custom action (ActionHandleUnclearQuery) in actions.py
+- Added new stories and rules for handling unclear queries
+- Improved the resume data handling to dynamically check available information
 
 ## Version 1.0.0 (2025-04-01)
 
