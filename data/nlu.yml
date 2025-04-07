@@ -77,8 +77,77 @@ nlu:
     - Could you share your resume summary?
     - Give me an overview of your career.
 
+- intent: menu_choice
+  examples: |
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+    - 10
+    - option 1
+    - option 2
+    - option 3
+    - option 4
+    - option 5
+    - option 6
+    - option 7
+    - option 8
+    - option 9
+    - option 10
+    - choose 1
+    - choose 2
+    - choose 3
+    - choose 4
+    - choose 5
+    - choose 6
+    - choose 7
+    - choose 8
+    - choose 9
+    - choose 10
+
+- intent: show_menu
+  examples: |
+    - show menu
+    - what are my options
+    - what can I ask
+    - show options
+    - what are the choices
+    - what can I choose
+    - show choices
+    - what are the options
+    - menu
+    - options
+    - choices
+    - help
+    - what can you tell me
+    - what information do you have
+    - what should I ask
+    - what topics can we discuss
+    - what can I learn about you
+    - what information is available
+    - what can you tell me about yourself
+    - what should I know
+    - what can I find out
+    - what do you have information on
+    - what can I discover
+    - what topics are available
+    - what can I learn
+
 - intent: unclear_query
   examples: |
+    - sdafsdf
+    - asdf
+    - qwerty
+    - 12345
+    - !@#$%
+    - zxcvbn
+    - lkjhgf
+    - mnbvcxz
     - I don't understand
     - What can I ask you?
     - What information do you have?

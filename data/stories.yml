@@ -2,7 +2,23 @@ version: "3.1"
 
 stories:
 
+- story: menu path
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: menu_choice
+  - action: action_handle_menu_choice
+
+- story: show menu path
+  steps:
+  - intent: show_menu
+  - action: utter_menu
+  - intent: menu_choice
+  - action: action_handle_menu_choice
+
 - story: unclear query path
   steps:
   - intent: unclear_query
-  - action: action_handle_unclear_query
+  - action: utter_unclear_query
+  - intent: menu_choice
+  - action: action_handle_menu_choice

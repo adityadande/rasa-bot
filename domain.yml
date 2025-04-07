@@ -15,35 +15,46 @@ intents:
   - ask_email
   - ask_phone
   - ask_summary
+  - menu_choice
+  - show_menu
   - unclear_query
 
 responses:
+  utter_greet:
+    - text: "Hello! I'm your resume assistant. Here are your options:\n1. About Me (Professional Summary)\n2. Education\n3. Work Experience\n4. Skills\n5. Contact Information\n\nPlease choose a number (1-5) or type 'menu' to see this list again."
+
+  utter_menu:
+    - text: "Here are your options:\n1. About Me (Professional Summary)\n2. Education\n3. Work Experience\n4. Skills\n5. Contact Information\n\nPlease choose a number (1-5)."
+
+  utter_invalid_choice:
+    - text: "I didn't understand that choice. Please select a number between 1 and 5, or type 'menu' to see the options again."
+
   utter_ask_full_name:
-  - text: "Your full name is {name}."
+    - text: "What is your full name?"
 
   utter_did_that_help:
-  - text: "Did that help you?"
+    - text: "Did that help?"
 
   utter_ask_experience:
-  - text: "I have experience at {companies} as a {roles}."
+    - text: "What is your work experience?"
 
   utter_ask_skills:
-  - text: "I am skilled in {skills}."
+    - text: "What are your skills?"
 
   utter_ask_education:
-  - text: "I graduated from {institution} with a degree in {degree}."
+    - text: "What is your education background?"
 
   utter_ask_email:
-    - text: "mz email is {email}."
+    - text: "What is your email address?"
 
   utter_ask_phone:
-    - text: "my phone number is {phone}."
+    - text: "What is your phone number?"
 
   utter_ask_summary:
-    - text: "I am skilled in {summary}."
-    
+    - text: "What is your professional summary?"
+
   utter_unclear_query:
-    - text: "I'm not sure I understood that. You can ask me about:\n- My work experience\n- My skills\n- My education\n- My contact information (email, phone)\n- A summary of my resume\n\nWhat would you like to know?"
+    - text: "I'm not sure I understand. Here are your options:\n1. About Me (Professional Summary)\n2. Education\n3. Work Experience\n4. Skills\n5. Contact Information\n\nPlease choose a number (1-5) or type 'menu' to see this list again."
 
 session_config:
   session_expiration_time: 60
