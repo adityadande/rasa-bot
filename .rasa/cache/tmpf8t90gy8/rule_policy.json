@@ -1,0 +1,44 @@
+{
+  "lookup": {
+    "rules": {
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"ask_email\"}}]": "action_answer_resume",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"ask_email\"}}, {\"prev_action\": {\"action_name\": \"action_answer_resume\"}, \"user\": {\"intent\": \"ask_email\"}}]": "action_listen",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"ask_phone\"}}]": "action_answer_resume",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"ask_phone\"}}, {\"prev_action\": {\"action_name\": \"action_answer_resume\"}, \"user\": {\"intent\": \"ask_phone\"}}]": "action_listen",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"ask_full_name\"}}]": "action_answer_resume",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"ask_full_name\"}}, {\"prev_action\": {\"action_name\": \"action_answer_resume\"}, \"user\": {\"intent\": \"ask_full_name\"}}]": "action_listen",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"ask_experience\"}}]": "action_answer_resume",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"ask_experience\"}}, {\"prev_action\": {\"action_name\": \"action_answer_resume\"}, \"user\": {\"intent\": \"ask_experience\"}}]": "action_listen",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"ask_skills\"}}]": "action_answer_resume",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"ask_skills\"}}, {\"prev_action\": {\"action_name\": \"action_answer_resume\"}, \"user\": {\"intent\": \"ask_skills\"}}]": "action_listen",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"ask_summary\"}}]": "action_answer_resume",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"ask_summary\"}}, {\"prev_action\": {\"action_name\": \"action_answer_resume\"}, \"user\": {\"intent\": \"ask_summary\"}}]": "action_listen",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"ask_education\"}}]": "action_answer_resume",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"ask_education\"}}, {\"prev_action\": {\"action_name\": \"action_answer_resume\"}, \"user\": {\"intent\": \"ask_education\"}}]": "action_listen",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"unclear_query\"}}]": "action_handle_unclear_query",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"unclear_query\"}}, {\"prev_action\": {\"action_name\": \"action_handle_unclear_query\"}, \"user\": {\"intent\": \"unclear_query\"}}]": "action_listen"
+    },
+    "rule_only_slots": [],
+    "rule_only_loops": [],
+    "rules_for_loop_unhappy_path": {},
+    "rules_not_in_stories": [
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"ask_experience\"}}, {\"prev_action\": {\"action_name\": \"action_answer_resume\"}, \"user\": {\"intent\": \"ask_experience\"}}]",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"ask_email\"}}, {\"prev_action\": {\"action_name\": \"action_answer_resume\"}, \"user\": {\"intent\": \"ask_email\"}}]",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"ask_skills\"}}, {\"prev_action\": {\"action_name\": \"action_answer_resume\"}, \"user\": {\"intent\": \"ask_skills\"}}]",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"ask_skills\"}}]",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"ask_summary\"}}, {\"prev_action\": {\"action_name\": \"action_answer_resume\"}, \"user\": {\"intent\": \"ask_summary\"}}]",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"ask_education\"}}]",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"ask_full_name\"}}, {\"prev_action\": {\"action_name\": \"action_answer_resume\"}, \"user\": {\"intent\": \"ask_full_name\"}}]",
+      "predicting default action with intent back",
+      "predicting default action with intent session_start",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"ask_experience\"}}]",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"ask_education\"}}, {\"prev_action\": {\"action_name\": \"action_answer_resume\"}, \"user\": {\"intent\": \"ask_education\"}}]",
+      "predicting default action with intent restart",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"ask_phone\"}}]",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"ask_email\"}}]",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"ask_summary\"}}]",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"ask_phone\"}}, {\"prev_action\": {\"action_name\": \"action_answer_resume\"}, \"user\": {\"intent\": \"ask_phone\"}}]",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"ask_full_name\"}}]"
+    ]
+  }
+}

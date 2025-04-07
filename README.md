@@ -10,6 +10,7 @@
 7. [Testing](#testing)
 8. [Troubleshooting](#troubleshooting)
 9. [Deployment](#deployment)
+10. [Version Information](#version-information)
 
 ## Overview
 
@@ -281,6 +282,41 @@ For issues and support:
 2. Review Rasa documentation
 3. Check GitHub issues
 4. Contact the development team
+
+## Version Information
+
+### Current Version: 1.1.0 (2025-04-07)
+
+This version includes:
+- Handling for unclear queries
+- Dynamic response generation based on available resume data
+- Enhanced error handling
+
+### Important: Training and Running the Servers
+
+**Before using the chatbot, you MUST follow these steps in order:**
+
+1. **Train the model with the latest data**:
+   ```bash
+   rasa train
+   ```
+   This creates a new model file in the `models/` directory.
+
+2. **Start the Rasa server** (in one terminal):
+   ```bash
+   rasa run --enable-api --cors "*"
+   ```
+   This starts the main Rasa server on http://localhost:5005.
+
+3. **Start the action server** (in another terminal):
+   ```bash
+   rasa run actions
+   ```
+   This starts the action server on http://localhost:5055.
+
+4. **Test the chatbot** by opening the `rasa_chat.html` file in a web browser.
+
+For more detailed version information, see [VERSION.md](VERSION.md).
 
 ## License
 

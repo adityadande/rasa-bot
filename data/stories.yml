@@ -28,3 +28,8 @@ stories:
   - action: utter_did_that_help
   - intent: deny
   - action: utter_goodbye
+
+- story: unclear query path
+  steps:
+  - intent: unclear_query
+  - action: action_handle_unclear_query

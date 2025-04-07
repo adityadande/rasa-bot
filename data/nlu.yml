@@ -59,7 +59,7 @@ nlu:
     - Can you give me your email address?
     - Please tell me your email.
     - I'd like to know your email.
-    - What’s your email?
+    - What's your email?
 
 - intent: ask_phone
   examples: |
@@ -67,7 +67,7 @@ nlu:
     - Can you give me your phone number?
     - Please tell me your phone number.
     - I'd like to know your contact number.
-    - What’s your contact number?
+    - What's your contact number?
 
 - intent: ask_summary
   examples: |
@@ -76,3 +76,25 @@ nlu:
     - What is your professional summary?
     - Could you share your resume summary?
     - Give me an overview of your career.
+
+- intent: unclear_query
+  examples: |
+    - I don't understand
+    - What can I ask you?
+    - What information do you have?
+    - What can you tell me?
+    - What do you know?
+    - What topics can we discuss?
+    - What should I ask?
+    - I'm not sure what to ask
+    - Can you help me?
+    - What options do I have?
+    - What can I learn about you?
+    - What information is available?
+    - What can you tell me about yourself?
+    - What should I know?
+    - What can I find out?
+    - What do you have information on?
+    - What can I discover?
+    - What topics are available?
+    - What can I learn?

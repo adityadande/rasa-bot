@@ -15,6 +15,7 @@ intents:
   - ask_email
   - ask_phone
   - ask_summary
+  - unclear_query
 
 responses:
   utter_greet:
@@ -56,6 +57,9 @@ responses:
 
   utter_ask_summary:
     - text: "I am skilled in {summary}."
+    
+  utter_unclear_query:
+    - text: "I'm not sure I understood that. You can ask me about:\n- My work experience\n- My skills\n- My education\n- My contact information (email, phone)\n- A summary of my resume\n\nWhat would you like to know?"
 
 session_config:
   session_expiration_time: 60
@@ -63,4 +67,5 @@ session_config:
 
 actions:
 - action_answer_resume
+- action_handle_unclear_query
 

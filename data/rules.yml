@@ -35,3 +35,8 @@ rules:
     steps:
       - intent: ask_summary
       - action: action_answer_resume
+      
+  - rule: Respond to unclear queries
+    steps:
+      - intent: unclear_query
+      - action: action_handle_unclear_query

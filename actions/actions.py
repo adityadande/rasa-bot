@@ -62,6 +62,53 @@ class ActionAnswerResume(Action):
         
         return []
 
+class ActionHandleUnclearQuery(Action):
+    def name(self) -> Text:
+        return "action_handle_unclear_query"
+
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        
+        # Load resume data to get available information
+        try:
+            with open("resume_data.json", "r") as file:
+                resume = json.load(file)
+                
+            # Create a list of available information
+            available_info = []
+            
+            # Check if each section has data
+            if resume.get("experience"):
+                available_info.append("work experience")
+                
+            if resume.get("skills"):
+                available_info.append("skills")
+                
+            if resume.get("education"):
+                available_info.append("education")
+                
+            if resume.get("email") or resume.get("phone"):
+                available_info.append("contact information")
+                
+            if resume.get("summary"):
+                available_info.append("professional summary")
+                
+            # Format the response
+            if available_info:
+                info_list = ", ".join(available_info)
+                response = f"I'm not sure I understood that. You can ask me about my {info_list}. What would you like to know?"
+            else:
+                response = "I'm not sure I understood that. What would you like to know about me?"
+                
+        except Exception as e:
+            # Fallback response if there's an error loading the resume data
+            response = "I'm not sure I understood that. You can ask me about my work experience, skills, education, contact information, or a summary of my resume. What would you like to know?"
+            
+        # Send the response
+        dispatcher.utter_message(text=response)
+        return []
+
 
 
 # This files contains your custom actions which can be used to run
