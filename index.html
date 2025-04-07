@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resume Chatbot</title>
-    <script src="https://cdn.jsdelivr.net/npm/rasa-webchat@1.0.1/lib/index.js"></script>
+    <!-- Load Socket.IO first -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.min.js"></script>
+    <!-- Load Rasa WebChat with a more reliable CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@rasahq/rasa-webchat@1.0.0/dist/index.js"></script>
+    <script src="script.js"></script>
     <style>
         body {
             margin: 0;
@@ -83,6 +87,8 @@
         }
         #webchat {
             display: none;
+            width: 100%;
+            height: 500px;
         }
         .mode-switch {
             position: fixed;
@@ -98,6 +104,21 @@
         }
         .mode-switch:hover {
             background: #005a9e;
+        }
+        .loading-indicator {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #0078D4;
+        }
+        .error-message {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #c62828;
+            background: #ffebee;
+            border-radius: 10px;
+            margin: 10px;
         }
     </style>
 </head>
@@ -132,7 +153,22 @@
         </div>
     </div>
 
-    <div id="webchat"></div>
+    <div id="webchat">
+        <div class="loading-indicator" id="loading-indicator">
+            <h3>Loading Rasa WebChat...</h3>
+            <p>Please wait while we connect to the Rasa server.</p>
+        </div>
+        <div class="error-message" id="error-message">
+            <h3>Error Loading Rasa WebChat</h3>
+            <p>We couldn't connect to the Rasa server. Please make sure:</p>
+            <ol>
+                <li>The Rasa server is running on http://localhost:5005</li>
+                <li>The Action server is running on http://localhost:5055</li>
+                <li>You have a stable internet connection</li>
+            </ol>
+            <button onclick="retryRasaConnection()" style="background: #0078D4; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; margin-top: 10px;">Retry Connection</button>
+        </div>
+    </div>
 
     <script>
         const resumeData = {
@@ -182,33 +218,189 @@
             }
         }
 
+        function retryRasaConnection() {
+            document.getElementById('error-message').style.display = 'none';
+            document.getElementById('loading-indicator').style.display = 'block';
+            initRasaWebchat();
+        }
+
         function initRasaWebchat() {
-            window.WebChat.default.init({
-                selector: "#webchat",
-                initPayload: '/get_started',
-                socketUrl: "http://localhost:5005",
-                socketPath: "/socket.io/",
-                customData: { language: "en" },
-                title: "Resume Bot",
-                subtitle: "Ask me about my experience",
-                profileAvatar: "https://i.imgur.com/nGF1K8f.jpg",
-                userAvatar: "https://i.imgur.com/8yQC5aG.jpg",
-                params: {
-                    storage: "session"
-                },
-                theme: {
-                    primary_color: "#0078D4",
-                    secondary_color: "#005a9e",
-                    background_color: "white",
-                    text_color: "black",
-                    header_text_color: "black",
-                    font_family: "Arial, sans-serif",
-                    message_bubble_style: {
-                        borderRadius: "10px",
-                        padding: "10px",
-                        margin: "5px"
+            console.log("Initializing Rasa WebChat...");
+            
+            // Show loading indicator
+            document.getElementById('loading-indicator').style.display = 'block';
+            document.getElementById('error-message').style.display = 'none';
+            
+            // Check if the WebChat object is available
+            if (typeof window.WebChat === 'undefined') {
+                console.error('Rasa WebChat library not loaded properly');
+                document.getElementById('loading-indicator').style.display = 'none';
+                document.getElementById('error-message').style.display = 'block';
+                return;
+            }
+            
+            try {
+                // Log the WebChat object to see its structure
+                console.log('WebChat object:', window.WebChat);
+                
+                // Create a simple chat interface if WebChat initialization fails
+                const webchatDiv = document.getElementById('webchat');
+                webchatDiv.innerHTML = `
+                    <div style="width: 100%; height: 500px; background: white; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: flex; flex-direction: column;">
+                        <div style="background: #0078D4; color: white; padding: 15px; border-radius: 10px 10px 0 0; display: flex; align-items: center;">
+                            <img src="https://i.imgur.com/nGF1K8f.jpg" alt="Bot Avatar" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
+                            <div>
+                                <h3 style="margin: 0;">Resume Bot (Rasa Mode)</h3>
+                                <small>Ask me about my experience</small>
+                            </div>
+                        </div>
+                        <div id="rasa-messages" style="flex-grow: 1; padding: 15px; overflow-y: auto;">
+                            <div style="margin: 10px 0; padding: 10px; border-radius: 10px; max-width: 80%; background: #f0f0f0; margin-right: auto;">
+                                Hello! I'm your resume chatbot powered by Rasa. You can ask me about my experience, skills, education, and more!
+                            </div>
+                        </div>
+                        <div style="padding: 15px; border-top: 1px solid #eee; display: flex;">
+                            <input type="text" id="rasa-input" placeholder="Type your message..." style="flex-grow: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; margin-right: 10px;">
+                            <button onclick="sendRasaMessage()" style="background: #0078D4; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer;">Send</button>
+                        </div>
+                    </div>
+                `;
+                
+                // Add event listener for Enter key
+                document.getElementById('rasa-input').addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        sendRasaMessage();
                     }
+                });
+                
+                // Hide loading indicator
+                document.getElementById('loading-indicator').style.display = 'none';
+                
+                // Try to initialize the WebChat if possible
+                if (typeof window.WebChat.default !== 'undefined' && typeof window.WebChat.default.init === 'function') {
+                    console.log("Using WebChat.default.init");
+                    window.WebChat.default.init({
+                        selector: "#webchat",
+                        initPayload: '/get_started',
+                        socketUrl: "http://localhost:5005",
+                        socketPath: "/socket.io/",
+                        customData: { language: "en" },
+                        title: "Resume Bot",
+                        subtitle: "Ask me about my experience",
+                        profileAvatar: "https://i.imgur.com/nGF1K8f.jpg",
+                        userAvatar: "https://i.imgur.com/8yQC5aG.jpg",
+                        params: {
+                            storage: "session"
+                        },
+                        theme: {
+                            primary_color: "#0078D4",
+                            secondary_color: "#005a9e",
+                            background_color: "white",
+                            text_color: "black",
+                            header_text_color: "black",
+                            font_family: "Arial, sans-serif",
+                            message_bubble_style: {
+                                borderRadius: "10px",
+                                padding: "10px",
+                                margin: "5px"
+                            }
+                        }
+                    });
+                } else if (typeof window.WebChat.init === 'function') {
+                    console.log("Using WebChat.init");
+                    window.WebChat.init({
+                        selector: "#webchat",
+                        initPayload: '/get_started',
+                        socketUrl: "http://localhost:5005",
+                        socketPath: "/socket.io/",
+                        customData: { language: "en" },
+                        title: "Resume Bot",
+                        subtitle: "Ask me about my experience",
+                        profileAvatar: "https://i.imgur.com/nGF1K8f.jpg",
+                        userAvatar: "https://i.imgur.com/8yQC5aG.jpg",
+                        params: {
+                            storage: "session"
+                        },
+                        theme: {
+                            primary_color: "#0078D4",
+                            secondary_color: "#005a9e",
+                            background_color: "white",
+                            text_color: "black",
+                            header_text_color: "black",
+                            font_family: "Arial, sans-serif",
+                            message_bubble_style: {
+                                borderRadius: "10px",
+                                padding: "10px",
+                                margin: "5px"
+                            }
+                        }
+                    });
+                } else {
+                    console.warn("WebChat initialization function not found, using custom implementation");
                 }
+            } catch (error) {
+                console.error('Error initializing Rasa WebChat:', error);
+                document.getElementById('loading-indicator').style.display = 'none';
+                document.getElementById('error-message').style.display = 'block';
+            }
+        }
+        
+        // Function to send messages to Rasa server
+        function sendRasaMessage() {
+            const input = document.getElementById('rasa-input');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            // Add user message to the chat
+            const messagesDiv = document.getElementById('rasa-messages');
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.style = "margin: 10px 0; padding: 10px; border-radius: 10px; max-width: 80%; background: #0078D4; color: white; margin-left: auto;";
+            userMessageDiv.textContent = message;
+            messagesDiv.appendChild(userMessageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            
+            // Clear input
+            input.value = '';
+            
+            // Send message to Rasa server
+            fetch('http://localhost:5005/webhooks/rest/webhook', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    sender: 'user',
+                    message: message
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Add bot responses to the chat
+                if (data && data.length > 0) {
+                    data.forEach(response => {
+                        if (response.text) {
+                            const botMessageDiv = document.createElement('div');
+                            botMessageDiv.style = "margin: 10px 0; padding: 10px; border-radius: 10px; max-width: 80%; background: #f0f0f0; margin-right: auto;";
+                            botMessageDiv.textContent = response.text;
+                            messagesDiv.appendChild(botMessageDiv);
+                        }
+                    });
+                } else {
+                    // If no response, add a default message
+                    const botMessageDiv = document.createElement('div');
+                    botMessageDiv.style = "margin: 10px 0; padding: 10px; border-radius: 10px; max-width: 80%; background: #f0f0f0; margin-right: auto;";
+                    botMessageDiv.textContent = "I'm not sure how to respond to that. Can you try asking about my experience, skills, education, or contact information?";
+                    messagesDiv.appendChild(botMessageDiv);
+                }
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            })
+            .catch(error => {
+                console.error('Error sending message to Rasa:', error);
+                const errorMessageDiv = document.createElement('div');
+                errorMessageDiv.style = "margin: 10px 0; padding: 10px; border-radius: 10px; max-width: 80%; background: #ffebee; color: #c62828; margin-right: auto;";
+                errorMessageDiv.textContent = "Error connecting to the Rasa server. Please make sure the server is running.";
+                messagesDiv.appendChild(errorMessageDiv);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
             });
         }
 
