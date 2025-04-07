@@ -4,8 +4,7 @@ stories:
 
 - story: menu path
   steps:
-  - intent: greet
-  - action: utter_greet
+  - action: utter_menu
   - intent: menu_choice
   - action: action_handle_menu_choice
 

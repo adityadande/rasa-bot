@@ -1,57 +1,16 @@
 version: "3.1"
 
 intents:
-  - greet
-  - goodbye
-  - affirm
-  - deny
-  - mood_great
-  - mood_unhappy
-  - bot_challenge
-  - ask_experience
-  - ask_skills
-  - ask_education
-  - ask_full_name
-  - ask_email
-  - ask_phone
-  - ask_summary
   - menu_choice
   - show_menu
   - unclear_query
 
 responses:
-  utter_greet:
-    - text: "Hello! I'm your resume assistant. Here are your options:\n1. About Me (Professional Summary)\n2. Education\n3. Work Experience\n4. Skills\n5. Contact Information\n\nPlease choose a number (1-5) or type 'menu' to see this list again."
-
   utter_menu:
     - text: "Here are your options:\n1. About Me (Professional Summary)\n2. Education\n3. Work Experience\n4. Skills\n5. Contact Information\n\nPlease choose a number (1-5)."
 
   utter_invalid_choice:
     - text: "I didn't understand that choice. Please select a number between 1 and 5, or type 'menu' to see the options again."
-
-  utter_ask_full_name:
-    - text: "What is your full name?"
-
-  utter_did_that_help:
-    - text: "Did that help?"
-
-  utter_ask_experience:
-    - text: "What is your work experience?"
-
-  utter_ask_skills:
-    - text: "What are your skills?"
-
-  utter_ask_education:
-    - text: "What is your education background?"
-
-  utter_ask_email:
-    - text: "What is your email address?"
-
-  utter_ask_phone:
-    - text: "What is your phone number?"
-
-  utter_ask_summary:
-    - text: "What is your professional summary?"
 
   utter_unclear_query:
     - text: "I'm not sure I understand. Here are your options:\n1. About Me (Professional Summary)\n2. Education\n3. Work Experience\n4. Skills\n5. Contact Information\n\nPlease choose a number (1-5) or type 'menu' to see this list again."
@@ -61,6 +20,5 @@ session_config:
   carry_over_slots_to_new_session: true
 
 actions:
-- action_answer_resume
-- action_handle_unclear_query
+- action_handle_menu_choice
 

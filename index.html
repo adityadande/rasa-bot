@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Chatbot</title>
+    <!-- Load Socket.IO first -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.min.js"></script>
+    <!-- Load Rasa WebChat with a more reliable CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@rasahq/rasa-webchat@1.0.0/dist/index.js"></script>
+    <script src="script.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        .chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+        }
+        .chat-header {
+            background: #0078D4;
+            color: white;
+            padding: 15px;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            align-items: center;
+        }
+        .chat-header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .chat-messages {
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+        .bot-message {
+            background: #f0f0f0;
+            margin-right: auto;
+        }
+        .user-message {
+            background: #0078D4;
+            color: white;
+            margin-left: auto;
+        }
+        .chat-input {
+            padding: 15px;
+            border-top: 1px solid #eee;
+            display: flex;
+        }
+        .chat-input input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            margin-right: 10px;
+        }
+        .chat-input button {
+            background: #0078D4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        .chat-input button:hover {
+            background: #005a9e;
+        }
+        #webchat {
+            display: none;
+            width: 100%;
+            height: 500px;
+        }
+        .mode-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            background: #0078D4;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            border: none;
+        }
+        .mode-switch:hover {
+            background: #005a9e;
+        }
+        .loading-indicator {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #0078D4;
+        }
+        .error-message {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #c62828;
+            background: #ffebee;
+            border-radius: 10px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <button class="mode-switch" onclick="toggleMode()">Switch to Rasa Mode</button>
+    
+    <div class="chat-container" id="standalone-chat">
+        <div class="chat-header">
+            <img src="https://i.imgur.com/nGF1K8f.jpg" alt="Bot Avatar">
+            <div>
+                <h3 style="margin: 0;">Resume Bot</h3>
+                <small>Ask me about my experience</small>
+            </div>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <div class="message bot-message">
+                Hello! I'm your resume chatbot. You can ask me about:
+                <ol>
+                    <li>My experience</li>
+                    <li>My skills</li>
+                    <li>My education</li>
+                    <li>My contact information</li>
+                    <li>My name</li>
+                    <li>My summary</li>
+                </ol>
+                Just type the number or ask your question!
+            </div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="user-input" placeholder="Type your message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <div id="webchat">
+        <div class="loading-indicator" id="loading-indicator">
+            <h3>Loading Rasa WebChat...</h3>
+            <p>Please wait while we connect to the Rasa server.</p>
+        </div>
+        <div class="error-message" id="error-message">
+            <h3>Error Loading Rasa WebChat</h3>
+            <p>We couldn't connect to the Rasa server. Please make sure:</p>
+            <ol>
+                <li>The Rasa server is running on http://localhost:5005</li>
+                <li>The Action server is running on http://localhost:5055</li>
+                <li>You have a stable internet connection</li>
+            </ol>
+            <button onclick="retryRasaConnection()" style="background: #0078D4; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; margin-top: 10px;">Retry Connection</button>
+        </div>
+    </div>
+
+    <script>
+        const resumeData = {
+            name: "Aditya Dande",
+            email: "adityadande@gmail.com",
+            phone: "+49 01783358864",
+            summary: "Developer with over 3 years of experience in software development and IT product management.",
+            skills: ["Microsoft Office", "Rasa", "Machine Learning", "Java", "R software", "Database technologies (SQL)", "HTML & CSS"],
+            experience: [
+                {
+                    company: "DHL Freight GmbH, Bonn",
+                    role: "Work Student",
+                    duration: "09/2022 – 08/2023"
+                },
+                {
+                    company: "CloudRoute Solutions Pvt. Ltd., Mumbai, India",
+                    role: "Salesforce Consultant",
+                    duration: "03/2019 – 08/2020"
+                }
+            ],
+            education: [
+                {
+                    degree: "Industrial Engineering & International Management",
+                    institution: "University of Applied Sciences Fresenius, Cologne",
+                    year: "2022-2024"
+                }
+            ]
+        };
+
+        let isRasaMode = false;
+
+        function toggleMode() {
+            isRasaMode = !isRasaMode;
+            const standaloneChat = document.getElementById('standalone-chat');
+            const webchat = document.getElementById('webchat');
+            const modeButton = document.querySelector('.mode-switch');
+
+            if (isRasaMode) {
+                standaloneChat.style.display = 'none';
+                webchat.style.display = 'block';
+                modeButton.textContent = 'Switch to Standalone Mode';
+                initRasaWebchat();
+            } else {
+                standaloneChat.style.display = 'flex';
+                webchat.style.display = 'none';
+                modeButton.textContent = 'Switch to Rasa Mode';
+            }
+        }
+
+        function retryRasaConnection() {
+            document.getElementById('error-message').style.display = 'none';
+            document.getElementById('loading-indicator').style.display = 'block';
+            initRasaWebchat();
+        }
+
+        function initRasaWebchat() {
+            console.log("Initializing Rasa WebChat...");
+            
+            // Show loading indicator
+            document.getElementById('loading-indicator').style.display = 'block';
+            document.getElementById('error-message').style.display = 'none';
+            
+            // Check if the WebChat object is available
+            if (typeof window.WebChat === 'undefined') {
+                console.error('Rasa WebChat library not loaded properly');
+                document.getElementById('loading-indicator').style.display = 'none';
+                document.getElementById('error-message').style.display = 'block';
+                return;
+            }
+            
+            try {
+                // Log the WebChat object to see its structure
+                console.log('WebChat object:', window.WebChat);
+                
+                // Create a simple chat interface if WebChat initialization fails
+                const webchatDiv = document.getElementById('webchat');
+                webchatDiv.innerHTML = `
+                    <div style="width: 100%; height: 500px; background: white; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: flex; flex-direction: column;">
+                        <div style="background: #0078D4; color: white; padding: 15px; border-radius: 10px 10px 0 0; display: flex; align-items: center;">
+                            <img src="https://i.imgur.com/nGF1K8f.jpg" alt="Bot Avatar" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
+                            <div>
+                                <h3 style="margin: 0;">Resume Bot (Rasa Mode)</h3>
+                                <small>Ask me about my experience</small>
+                            </div>
+                        </div>
+                        <div id="rasa-messages" style="flex-grow: 1; padding: 15px; overflow-y: auto;">
+                            <div style="margin: 10px 0; padding: 10px; border-radius: 10px; max-width: 80%; background: #f0f0f0; margin-right: auto;">
+                                Hello! I'm your resume chatbot powered by Rasa. You can ask me about my experience, skills, education, and more!
+                            </div>
+                        </div>
+                        <div style="padding: 15px; border-top: 1px solid #eee; display: flex;">
+                            <input type="text" id="rasa-input" placeholder="Type your message..." style="flex-grow: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; margin-right: 10px;">
+                            <button onclick="sendRasaMessage()" style="background: #0078D4; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer;">Send</button>
+                        </div>
+                    </div>
+                `;
+                
+                // Add event listener for Enter key
+                document.getElementById('rasa-input').addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        sendRasaMessage();
+                    }
+                });
+                
+                // Hide loading indicator
+                document.getElementById('loading-indicator').style.display = 'none';
+                
+                // Try to initialize the WebChat if possible
+                if (typeof window.WebChat.default !== 'undefined' && typeof window.WebChat.default.init === 'function') {
+                    console.log("Using WebChat.default.init");
+                    window.WebChat.default.init({
+                        selector: "#webchat",
+                        initPayload: '/get_started',
+                        socketUrl: "http://localhost:5005",
+                        socketPath: "/socket.io/",
+                        customData: { language: "en" },
+                        title: "Resume Bot",
+                        subtitle: "Ask me about my experience",
+                        profileAvatar: "https://i.imgur.com/nGF1K8f.jpg",
+                        userAvatar: "https://i.imgur.com/8yQC5aG.jpg",
+                        params: {
+                            storage: "session"
+                        },
+                        theme: {
+                            primary_color: "#0078D4",
+                            secondary_color: "#005a9e",
+                            background_color: "white",
+                            text_color: "black",
+                            header_text_color: "black",
+                            font_family: "Arial, sans-serif",
+                            message_bubble_style: {
+                                borderRadius: "10px",
+                                padding: "10px",
+                                margin: "5px"
+                            }
+                        }
+                    });
+                } else if (typeof window.WebChat.init === 'function') {
+                    console.log("Using WebChat.init");
+                    window.WebChat.init({
+                        selector: "#webchat",
+                        initPayload: '/get_started',
+                        socketUrl: "http://localhost:5005",
+                        socketPath: "/socket.io/",
+                        customData: { language: "en" },
+                        title: "Resume Bot",
+                        subtitle: "Ask me about my experience",
+                        profileAvatar: "https://i.imgur.com/nGF1K8f.jpg",
+                        userAvatar: "https://i.imgur.com/8yQC5aG.jpg",
+                        params: {
+                            storage: "session"
+                        },
+                        theme: {
+                            primary_color: "#0078D4",
+                            secondary_color: "#005a9e",
+                            background_color: "white",
+                            text_color: "black",
+                            header_text_color: "black",
+                            font_family: "Arial, sans-serif",
+                            message_bubble_style: {
+                                borderRadius: "10px",
+                                padding: "10px",
+                                margin: "5px"
+                            }
+                        }
+                    });
+                } else {
+                    console.warn("WebChat initialization function not found, using custom implementation");
+                }
+            } catch (error) {
+                console.error('Error initializing Rasa WebChat:', error);
+                document.getElementById('loading-indicator').style.display = 'none';
+                document.getElementById('error-message').style.display = 'block';
+            }
+        }
+        
+        // Function to send messages to Rasa server
+        function sendRasaMessage() {
+            const input = document.getElementById('rasa-input');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            // Add user message to the chat
+            const messagesDiv = document.getElementById('rasa-messages');
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.style = "margin: 10px 0; padding: 10px; border-radius: 10px; max-width: 80%; background: #0078D4; color: white; margin-left: auto;";
+            userMessageDiv.textContent = message;
+            messagesDiv.appendChild(userMessageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            
+            // Clear input
+            input.value = '';
+            
+            // Send message to Rasa server
+            fetch('http://localhost:5005/webhooks/rest/webhook', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    sender: 'user',
+                    message: message
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Add bot responses to the chat
+                if (data && data.length > 0) {
+                    data.forEach(response => {
+                        if (response.text) {
+                            const botMessageDiv = document.createElement('div');
+                            botMessageDiv.style = "margin: 10px 0; padding: 10px; border-radius: 10px; max-width: 80%; background: #f0f0f0; margin-right: auto;";
+                            botMessageDiv.textContent = response.text;
+                            messagesDiv.appendChild(botMessageDiv);
+                        }
+                    });
+                } else {
+                    // If no response, add a default message
+                    const botMessageDiv = document.createElement('div');
+                    botMessageDiv.style = "margin: 10px 0; padding: 10px; border-radius: 10px; max-width: 80%; background: #f0f0f0; margin-right: auto;";
+                    botMessageDiv.textContent = "I'm not sure how to respond to that. Can you try asking about my experience, skills, education, or contact information?";
+                    messagesDiv.appendChild(botMessageDiv);
+                }
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            })
+            .catch(error => {
+                console.error('Error sending message to Rasa:', error);
+                const errorMessageDiv = document.createElement('div');
+                errorMessageDiv.style = "margin: 10px 0; padding: 10px; border-radius: 10px; max-width: 80%; background: #ffebee; color: #c62828; margin-right: auto;";
+                errorMessageDiv.textContent = "Error connecting to the Rasa server. Please make sure the server is running.";
+                messagesDiv.appendChild(errorMessageDiv);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            });
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('user-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            // Add user message
+            addMessage(message, 'user');
+            input.value = '';
+
+            // Process message and get response
+            const response = processMessage(message);
+            setTimeout(() => addMessage(response, 'bot'), 500);
+        }
+
+        function addMessage(text, sender) {
+            const messagesDiv = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            messageDiv.textContent = text;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function processMessage(message) {
+            message = message.toLowerCase();
+            
+            // Handle numbered responses
+            if (message === '1' || message.includes('experience')) {
+                return resumeData.experience.map(exp => 
+                    `${exp.role} at ${exp.company} (${exp.duration})`
+                ).join('\n');
+            }
+            else if (message === '2' || message.includes('skill')) {
+                return "My skills include: " + resumeData.skills.join(', ');
+            }
+            else if (message === '3' || message.includes('education')) {
+                const edu = resumeData.education[0];
+                return `I graduated from ${edu.institution} with a degree in ${edu.degree} in ${edu.year}.`;
+            }
+            else if (message === '4' || message.includes('contact')) {
+                return `Contact Information:\nEmail: ${resumeData.email}\nPhone: ${resumeData.phone}`;
+            }
+            else if (message === '5' || message.includes('name')) {
+                return `My name is ${resumeData.name}`;
+            }
+            else if (message === '6' || message.includes('summary')) {
+                return resumeData.summary;
+            }
+            else if (message.includes('hello') || message.includes('hi')) {
+                return "Hello! How can I help you today?";
+            }
+            else if (message.includes('email')) {
+                return `My email address is: ${resumeData.email}`;
+            }
+            else if (message.includes('phone')) {
+                return `My phone number is: ${resumeData.phone}`;
+            }
+            else {
+                return "I'm not sure about that. You can ask me about:\n1. Experience\n2. Skills\n3. Education\n4. Contact Information\n5. Name\n6. Summary\n\nJust type the number or ask your question!";
+            }
+        }
+
+        // Allow sending message with Enter key
+        document.getElementById('user-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
